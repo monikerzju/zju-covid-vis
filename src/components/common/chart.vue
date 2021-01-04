@@ -37,7 +37,6 @@ export default {
     updateRange (range, showLabel) {
       this.range = range
       this.showLabel = showLabel
-      window.ga('send', 'event', 'chart', 'range-updated', range)
     }
   },
   computed: {

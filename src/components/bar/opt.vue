@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="title">{{chartTitle}}</div>
     <div>
       <vSelect
         class="select"
@@ -27,7 +28,7 @@ import vSelect from 'vue-select'
 
 export default {
   name: 'BarChartOpt',
-  props: ['chartData'],
+  props: ['chartData', 'currentCountry'],
   components: {
     VueChart,
     vSelect
@@ -36,12 +37,16 @@ export default {
     return {
       whatToShow: '确诊',
       optionList: ['确诊', '治愈', '死亡', '新增确诊', '新增治愈', '新增死亡', '治愈率', '死亡率'],
-      barColors: ['#df3838']
+      barColors: ['#df3838'],
+      halfChartTitle: '新冠疫情确诊情况',
+      lastWhatToShow: '确诊',
+      chartTitle: null
     }
   },
   methods: {
     async switchWhatToShow (opt) {
       console.time('switchWhatToShow')
+      this.lastWhatToShow = this.whatToShow
       this.whatToShow = opt
       if (this.whatToShow === '确诊' || this.whatToShow === '新增确诊') {
         this.barColors = ['#df3838']
@@ -56,6 +61,8 @@ export default {
   computed: {
     calcPairs: function () {
       let that = this
+      that.halfChartTitle = that.halfChartTitle.replace(that.lastWhatToShow, that.whatToShow)
+      that.chartTitle = that.currentCountry + that.halfChartTitle
       return [
         {
           name: this.whatToShow,

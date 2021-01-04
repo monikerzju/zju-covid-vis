@@ -21,11 +21,11 @@
       </div>
       <!-- Bar Chart -->
       <div class="bar_chart">
-        <BarChartOpt :chartData="currentCountryData"></BarChartOpt>
+        <BarChartOpt :chartData="currentCountryData" :currentCountry="currentCountry"></BarChartOpt>
       </div>
       <!-- Line Chart -->
       <div class="line_chart">
-        <LineChartOpt :chartData="currentCountryData"></LineChartOpt>
+        <LineChartOpt :chartData="currentCountryData" :currentCountry="currentCountry"></LineChartOpt>
       </div>
     </div>
     <div class="multi_show">
@@ -63,7 +63,9 @@ export default {
       isWorld: null,
       countryList: [],
       display: {},
-      currentCountryData: null
+      currentCountryData: null,
+      barChartTitle: null,
+      lineChartTitle: null
     }
   },
   async mounted () {
@@ -75,6 +77,7 @@ export default {
   methods: {
     async switchCountry (country) {
       console.time('switchCountry')
+      this.oldCountry = this.currentCountry
       this.currentCountry = country
       if (this.currentCountry === '全球') {
         this.isWorld = true
