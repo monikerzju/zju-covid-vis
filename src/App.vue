@@ -34,7 +34,7 @@
       </div>
       <!-- World Map -->
       <div class="world_map">
-        <WorldMapOpt :chartData="currentCountryData"></WorldMapOpt>
+        <WorldMapOpt :chartData= 'mapShowData' :geoData="mapGeoData"></WorldMapOpt>
       </div>
     </div>
   </div>
@@ -48,6 +48,7 @@ import LineChartOpt from './components/line/opt.vue'
 import WorldMapOpt from './components/map/opt.vue'
 import globalData from './assets/json/global_data.json'
 import perCountryData from './assets/json/countries_data.json'
+import mapDrawGeoData from './assets/json/worldCountryGeo_data.json'
 
 export default {
   name: 'App',
@@ -65,7 +66,9 @@ export default {
       display: {},
       currentCountryData: null,
       barChartTitle: null,
-      lineChartTitle: null
+      lineChartTitle: null,
+      mapShowData: perCountryData,
+      mapGeoData: mapDrawGeoData
     }
   },
   async mounted () {
@@ -73,6 +76,7 @@ export default {
     this.currentCountry = '全球'
     this.countryList = countryListReader()
     this.currentCountryData = globalData
+    this.mapGeoData = mapDrawGeoData
   },
   methods: {
     async switchCountry (country) {
