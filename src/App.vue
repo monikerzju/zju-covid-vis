@@ -32,6 +32,12 @@ np<template>
       <div class="section_header">
         <h3>疫情状况比较</h3>
       </div>
+      <!-- Compare Animation -->
+      <div class="cabar_chart">
+        <CompareAnimation :chartData="mapShowData"></CompareAnimation>
+      </div>
+    </div>
+    <div class="map_show">
       <!-- World Map -->
       <div class="map_title">
         <h3>世界疫情地图</h3>
@@ -52,6 +58,7 @@ import WorldMapOpt from './components/map/opt.vue'
 import globalData from './assets/json/global_data.json'
 import perCountryData from './assets/json/countries_data.json'
 import mapDrawGeoData from './assets/json/worldCountryGeo_data.json'
+import CompareAnimation from './components/comparison/cabar.vue'
 
 export default {
   name: 'App',
@@ -59,7 +66,8 @@ export default {
     vSelect,
     BarChartOpt,
     LineChartOpt,
-    WorldMapOpt
+    WorldMapOpt,
+    CompareAnimation
   },
   data: () => {
     return {
