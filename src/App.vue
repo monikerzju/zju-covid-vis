@@ -1,4 +1,4 @@
-<template>
+np<template>
   <div id="app">
     <!-- Header -->
     <div class="covid_header">
@@ -33,6 +33,9 @@
         <h3>疫情状况比较</h3>
       </div>
       <!-- World Map -->
+      <div class="map_title">
+        <h3>世界疫情地图</h3>
+      </div>
       <div class="world_map">
         <WorldMapOpt :chartData= 'mapShowData' :geoData="mapGeoData"></WorldMapOpt>
       </div>
