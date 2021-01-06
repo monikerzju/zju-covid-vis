@@ -10,7 +10,7 @@
     ></vSelect>
   </div>
   <div id="map-container" :style="{width:'1920px',height:'1080px'}" >
-    <meta name='viewport' content='width=device-width,initial-scale=1.0' />,
+    <meta name='viewport' content='width=device-width initial-scale=1.0' />
   </div>
   </div>
 </template>
