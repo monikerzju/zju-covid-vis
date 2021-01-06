@@ -92,7 +92,6 @@ export default {
           break
         }
       }
-      console.log(this.optionDates)
       console.timeEnd('calcDateList')
     },
     emitDateSwitch (e) {
