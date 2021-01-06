@@ -9,6 +9,33 @@
         @input='switchWhatToShow'
       ></vSelect>
     </div>
+    <div>
+      <vSelect
+        class='select'
+        :clearable='false'
+        :value='yearWhatToShow'
+        :options='yearOptionList'
+        @input='switchYear'
+      ></vSelect>
+    </div>
+    <div>
+      <vSelect
+        class='select'
+        :clearable='false'
+        :value='monthWhatToShow'
+        :options='monthOptionList'
+        @input='switchMonth'
+      ></vSelect>
+    </div>
+    <div>
+      <vSelect
+        class='select'
+        :clearable='false'
+        :value='dayWhatToShow'
+        :options='dayOptionList'
+        @input='switchDay'
+      ></vSelect>
+    </div>
     <div id="map-container" :style="{width:'document.body.clientWidth',height:'1080px'}" >
       <meta name='viewport' content='width=device-width initial-scale=1.0' />
     </div>
@@ -38,6 +65,18 @@ export default {
       whatToShow: '确诊',
       lastWhatToShow: '确诊',
       optionList: ['确诊', '治愈', '死亡', '新增确诊', '新增治愈', '新增死亡', '治愈率', '死亡率'],
+      yearWhatToShow: '2020年',
+      yearLastWhatToShow: '2020年',
+      yearOptionList: ['2020年', '2021年'],
+      monthWhatToShow: '12月',
+      monthLastWhatToShow: '12月',
+      monthOptionList: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      dayWhatToShow: '31日',
+      dayLastWhatToShow: '31日',
+      dayOptionList: ['1日', '2日', '3日', '4日', '5日', '6日', '7日', '8日', '9日', '10日', '11日', '12日', '13日', '14日', '15日', '16日', '17日', '18日', '19日', '20日', '21日', '22日', '23日', '24日', '25日', '26日', '27日', '28日', '29日', '30日', '31日'],
+      year: '2020',
+      month: '12',
+      day: '31',
       width: 1250,
       height: 900,
       date: '2020-12-31',
@@ -53,7 +92,6 @@ export default {
 
   methods: {
     async switchWhatToShow (opt) {
-      console.log(1)
       this.lastWhatToShow = this.whatToShow
       this.whatToShow = opt
       if (this.whatToShow === '确诊') {
@@ -107,6 +145,35 @@ export default {
       }
     },
 
+    async switchYear (opt) {
+      this.yearLastWhatToShow = this.yearWhatToShow
+      this.yearWhatToShow = opt
+      this.year = this.yearWhatToShow.substr(0, 4)
+      this.date = this.year + '-' + this.month + '-' + this.day
+      this.worldBaseInit()
+    },
+    async switchMonth (opt) {
+      this.monthLastWhatToShow = this.monthWhatToShow
+      this.monthWhatToShow = opt
+      if (this.monthWhatToShow.length === 2) {
+        this.month = '0' + this.monthWhatToShow.substr(0, 1)
+      } else {
+        this.month = this.monthWhatToShow.substr(0, 2)
+      }
+      this.date = this.year + '-' + this.month + '-' + this.day
+      this.worldBaseInit()
+    },
+    async switchDay (opt) {
+      this.dayLastWhatToShow = this.dayWhatToShow
+      this.dayWhatToShow = opt
+      if (this.dayWhatToShow.length === 2) {
+        this.day = '0' + this.dayWhatToShow.substr(0, 1)
+      } else {
+        this.day = this.dayWhatToShow.substr(0, 2)
+      }
+      this.date = this.year + '-' + this.month + '-' + this.day
+      this.worldBaseInit()
+    },
     initMap () {
       // 指定图表的宽高
       this.width = document.body.clientWidth
@@ -138,7 +205,7 @@ export default {
       // 地图投影-墨卡托投影
       const projection = d3.geoMercator().fitExtent([
         [0, 100],
-        [this.width + 250, this.height]
+        [this.width, this.height]
       ], worldNoATAGeo)
 
       // 地理路径生成器
@@ -200,14 +267,14 @@ export default {
         .join('rect')
         .attr('width', 30)
         .attr('height', 15)
-        .attr('x', this.width * 0.2)
+        .attr('x', this.width * 0.15)
         .attr('y', (d, i) => (this.height * 0.65) + (i + 1) * 40)
         .style('fill', d => this.color(d))
 
       this.legend.selectAll('text')
         .data(this.level)
         .join('text')
-        .attr('x', this.width * 0.2 + 35)
+        .attr('x', this.width * 0.15 + 35)
         .attr('y', (d, i) => (this.height * 0.65 + 15) + (i + 1) * 40)
         .text(d => d)
         .attr('text-anchor', 'start')
