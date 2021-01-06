@@ -42,6 +42,7 @@ export default {
       svg: null,
       worldBase: null,
       legend: null,
+      tooltip: null,
       color: d3.scaleOrdinal(d3.schemeReds[6]).domain(['0-1k人', '1k-1w人', '1w-10w人', '10w-100w人', '100w-1000w人', '1000w人及以上']),
       level: ['0-1k人', '1k-1w人', '1w-10w人', '10w-100w人', '100w-1000w人', '1000w人及以上'],
       countLevel: [1000, 10000, 100000, 1000000, 10000000],
@@ -112,8 +113,8 @@ export default {
         this.reDraw()
       } else if (this.whatToShow === '死亡率') {
         this.typeNow = this.dataType[7]
-        this.level = ['0%-1%', '1%-5%', '5%-10%', '10%-15%', '15%-20%', '20%及以上']
-        this.countLevel = [0.01, 0.05, 0.1, 0.15, 0.2]
+        this.level = ['0%-1%', '1%-3%', '3%-5%', '5%-10%', '10%-20%', '20%及以上']
+        this.countLevel = [0.01, 0.03, 0.05, 0.10, 0.2]
         this.color = d3.scaleOrdinal(d3.schemeGreys[6]).domain(this.level)
         this.reDraw()
       }
@@ -122,6 +123,7 @@ export default {
     async switchDate (opt) {
       this.date = opt
       this.worldBaseInit()
+      this.tooltipInit()
     },
 
     initMap () {
@@ -172,6 +174,7 @@ export default {
         .attr('stroke', 'white')
       this.worldBaseInit()
       this.legendInit()
+      this.tooltipInit()
     },
 
     worldBaseInit () {
@@ -243,9 +246,79 @@ export default {
         .text(d => d)
     },
 
+    tooltipInit () {
+      // 添加提示框
+      this.tooltip = this.g.append('g')
+        .attr('class', 'tooltip')
+        .attr('opacity', 0)
+
+      this.tooltip.append('rect')
+        .attr('fill', 'white')
+        .attr('rx', 0)
+        .attr('ry', 0)
+        .attr('width', 180)
+        .attr('height', 40)
+        .attr('stroke', 'black')
+        .attr('style', 'stroke-width:1')
+
+      this.tooltip.append('text')
+        .attr('font-size', 12)
+        .attr('transform', `translate(${15},${25})`)
+
+      // 不知道为啥在这里会把this.chartDate\this.data识别为undefined，所以在外面声明一个全局变量缓存数据
+      let dataCache = this.chartData
+      let dateCache = this.date
+      let typeNowCache = this.typeNow
+      this.worldBase.on('mouseover', function (d) {
+        const x = d3.event.clientX
+        const y = d3.event.clientY
+        const countryName = d.properties.name
+        // 某一个国家的所有数据
+        const OneCountryData = dataCache.filter(d => d.country === countryName)
+        // 某一个国家某一天的数据
+        let count = 0
+        if (OneCountryData.length > 0) {
+          OneCountryData[0].list.map(d => {
+            if (d.date === dateCache) {
+              if (typeNowCache === 'total_confirm') {
+                count = d.total_confirm
+              } else if (typeNowCache === 'daily_confirm') {
+                count = d.daily_confirm
+              } else if (typeNowCache === 'total_death') {
+                count = d.total_death
+              } else if (typeNowCache === 'daily_death') {
+                count = d.daily_death
+              } else if (typeNowCache === 'total_cure') {
+                count = d.total_cure
+              } else if (typeNowCache === 'daily_cure') {
+                count = d.daily_cure
+              } else if (typeNowCache === 'cure_rate') {
+                count = d.cure_rate
+              } else if (typeNowCache === 'death_rate') {
+                count = d.death_rate
+              }
+            }
+          })
+        }
+        d3.select('.tooltip')
+          .attr('transform', `translate(${x},${y})`) // 提示框跟随鼠标移动
+          .attr('opacity', 0.8)
+        d3.select('.tooltip').select('text')
+          .text(countryName + ' : ' + count)
+          .attr('text-anchor', 'start')
+          .attr('font-size', '15')
+          // .text(`${d.name} : ${d.value}`)
+      })
+        .on('mouseout', function () {
+          d3.select('.tooltip')
+            .attr('opacity', 0)
+        })
+    },
+
     reDraw () {
       this.worldBaseInit()
       this.legendChange()
+      this.tooltipInit()
     }
   }
 }
