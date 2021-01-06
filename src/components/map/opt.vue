@@ -1,17 +1,17 @@
 <template>
   <div>
-  <div>
-    <vSelect
-      class='select'
-      :clearable='false'
-      :value='whatToShow'
-      :options='optionList'
-      @input='switchWhatToShow'
-    ></vSelect>
-  </div>
-  <div id="map-container" :style="{width:'1920px',height:'1080px'}" >
-    <meta name='viewport' content='width=device-width initial-scale=1.0' />
-  </div>
+    <div>
+      <vSelect
+        class='select'
+        :clearable='false'
+        :value='whatToShow'
+        :options='optionList'
+        @input='switchWhatToShow'
+      ></vSelect>
+    </div>
+    <div id="map-container" :style="{width:'document.body.clientWidth',height:'1080px'}" >
+      <meta name='viewport' content='width=device-width initial-scale=1.0' />
+    </div>
   </div>
 </template>
 
@@ -109,7 +109,7 @@ export default {
 
     initMap () {
       // 指定图表的宽高
-      this.width = 1200
+      this.width = document.body.clientWidth
       this.height = 800
 
       d3.select('#map-container')
