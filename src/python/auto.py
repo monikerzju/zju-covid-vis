@@ -1,14 +1,14 @@
 import pandas as pd
 import math
+import sys
 import os
+import time
 
 print('Data are from https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series.')
 
 print_country_name = False
-print_global_data = False
+print_global_data = True
 print_country_data = True
-
-last_date = '1/2/21'
 
 def list_country():
     df = pd.read_csv('./src/assets/csv/time_series_covid19_confirmed_global.csv')
@@ -34,6 +34,9 @@ def format_string(date):
     return ret
 
 def calc_global_data():
+    output = sys.stdout
+    out_file = open('./src/assets/json/global_data.json', 'w')
+    sys.stdout = out_file
     dfc = pd.read_csv('./src/assets/csv/time_series_covid19_confirmed_global.csv')
     dfd = pd.read_csv('./src/assets/csv/time_series_covid19_deaths_global.csv')
     dfr = pd.read_csv('./src/assets/csv/time_series_covid19_recovered_global.csv')
@@ -72,10 +75,21 @@ def calc_global_data():
             print("    \"cure_rate\": " + str(format(total_cure / total_confirm, '.4f')) + ",")
             print("    \"death_rate\": " + str(format(total_death / total_confirm, '.4f')) + ",")
             print("    \"confirm_rate\": " + str(0) + "")
-            print('  },')
+            cmp_index = 0
+            for fake_index, fake_row in dfc.iteritems():
+                cmp_index = fake_index
+            if index != cmp_index:
+                print('  },')
+            else:
+                print('  }')
     print(']')
+    out_file.close()
+    sys.stdout = output
 
 def calc_country_data():
+    output = sys.stdout
+    out_file = open('./src/assets/json/countries_data.json', 'w')
+    sys.stdout = out_file
     dfc = pd.read_csv('./src/assets/csv/time_series_covid19_confirmed_global.csv')
     dfd = pd.read_csv('./src/assets/csv/time_series_covid19_deaths_global.csv')
     dfr = pd.read_csv('./src/assets/csv/time_series_covid19_recovered_global.csv')
@@ -89,7 +103,7 @@ def calc_country_data():
         last_country = countries_col[i]
     for country in countries:
         print('  {')
-        print('    \"country\": ' + "\"" + country.replace("'", "\\'") + "\",")
+        print('    \"country\": ' + "\"" + country + "\",")
         print("    \"list\": [")
         total_confirm = -1
         total_death = -1
@@ -128,19 +142,47 @@ def calc_country_data():
                 print("        \"cure_rate\": " + str(format(total_cure / max(total_confirm, 1), '.4f')) + ",")
                 print("        \"death_rate\": " + str(format(total_death / max(total_confirm, 1), '.4f')) + ",")
                 print("        \"confirm_rate\": " + str(0) + "")
-                if index != last_date:
+                cmp_date = 0
+                for fake_index, fake_row in dfc.iteritems():
+                    cmp_date = fake_index
+                if index != cmp_date:
                     print('      },')
                 else:
                     print('      }')
         print("    ]")
-        print('  },')
+        cmp_country = 0
+        for fake_country in countries:
+            cmp_country = fake_country
+        if (country != cmp_country):
+            print('  },')
+        else:
+            print('  }')
     print(']')
+    out_file.close()
+    sys.stdout = output    
 
-if print_country_name:
-    list_country()
-    print("")
-if print_global_data:
-    calc_global_data()
-    print("")
-if print_country_data:
-    calc_country_data()
+def update():
+    if print_country_name:
+        list_country()
+        print("")
+    if print_global_data:
+        calc_global_data()
+        print("")
+    if print_country_data:
+        calc_country_data()
+
+download = False
+if download:
+    print('Try to update.')
+    string = ""
+    http_proxy = input("Your HTTP Proxy Port: ")
+    string += "export http_proxy=http://127.0.0.1:" + http_proxy + "; "
+    string += "export https_proxy=http://127.0.0.1:" + http_proxy + "; "
+    string += "wget -O ./src/assets/csv/time_series_covid19_confirmed_global.csv https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv; "
+    string += "wget -O ./src/assets/csv/time_series_covid19_recovered_global.csv https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv; "
+    string += "wget -O ./src/assets/csv/time_series_covid19_deaths_global.csv https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+    os.system(string)
+    update()
+    print('Updated and pushed.')
+else:
+    update()
