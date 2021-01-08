@@ -46,6 +46,7 @@ export default {
     this.dataOri = this.cabarDataOri
     this.firstDate = this.dataOri[0][1]
     this.lastDate = this.dataOri[0][this.dataOri[0].length - 1]
+    this.dateNow = this.dataOri[0][this.dataOri[0].length - 2]
     this.cabarInit()
   },
 
@@ -70,6 +71,7 @@ export default {
       let axis = null
       let svg = null
       let dateTitle = null
+      this.dateIndex = this.dataOri[0].length - 2
 
       // 创建SVG
       const createSvg = () => (svg = d3.select('#cabar-container').append('svg').attr('width', width).attr('height', height))
@@ -229,6 +231,7 @@ export default {
         // eslint-disable-next-line no-unused-vars
         const ticker = d3.interval(() => {
           if (this.dateIndex < this.dataOri[0].length - 1) {
+            this.dateIndex++
             this.dateNow = this.dataOri[0][this.dateIndex]
             date = getDate()
             dateTitle.text(date)
@@ -236,7 +239,7 @@ export default {
             updateAxis()
             renderAxisLine()
             renderChart()
-            this.dateIndex++
+            // this.dateIndex++
           } else if (this.dateIndex === this.dataOri[0].length - 1 && this.stopRepeatCount < this.stopRepeatMax) {
             this.dateNow = this.dataOri[0][this.dateIndex]
             this.stopRepeatCount += 1
