@@ -34,7 +34,7 @@ np<template>
       </div>
       <!-- Compare Animation -->
       <div class="cabar_chart">
-        <CompareAnimation :chartData="mapShowData"></CompareAnimation>
+        <CompareAnimation :cabarDataOri="cabarDataOri"></CompareAnimation>
       </div>
     </div>
     <div class="map_show">
@@ -59,6 +59,7 @@ import globalData from './assets/json/global_data.json'
 import perCountryData from './assets/json/countries_data.json'
 import mapDrawGeoData from './assets/json/worldCountryGeo_data.json'
 import CompareAnimation from './components/comparison/cabar.vue'
+import cabarData from './assets/json/cabarData.json'
 
 export default {
   name: 'App',
@@ -79,7 +80,8 @@ export default {
       barChartTitle: null,
       lineChartTitle: null,
       mapShowData: perCountryData,
-      mapGeoData: mapDrawGeoData
+      mapGeoData: mapDrawGeoData,
+      cabarDataOri: cabarData
     }
   },
   async mounted () {
@@ -88,6 +90,7 @@ export default {
     this.countryList = countryListReader()
     this.currentCountryData = globalData
     this.mapGeoData = mapDrawGeoData
+    this.cabarDataOri = cabarData
   },
   methods: {
     async switchCountry (country) {
