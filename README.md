@@ -24,6 +24,5 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 # TODO
 
-1. One bar-chart animation
 2. Auto data update and push every day
 3. Add \<style> to different \<div>
