@@ -3,6 +3,15 @@
     <meta charset="utf-8">
     <div class="title">{{chartTitle}}</div>
     <div>
+      <vSelect
+        class='select'
+        :clearable='false'
+        :value='whatToShow'
+        :options='optionList'
+        @input='switchWhatToShow'
+      ></vSelect>
+    </div>
+    <div>
       <DateSlider
         :startDate='firstDate'
         :endDate='lastDate'
@@ -19,34 +28,42 @@
 <script>
 import * as d3 from 'd3'
 import DateSlider from '../common/slider.vue'
+import vSelect from 'vue-select'
 
 export default {
   name: 'CompareAnimation',
   props: ['cabarDataOri'],
   components: {
+    vSelect,
     DateSlider
   },
 
   data: () => {
     return {
+      svgDelete: false,
       chartTitle: '全球新冠疫情动态排行榜',
       svg: null,
       // For the Slider
-      firstDate: '2020-03-12',
-      lastDate: '2020-03-28',
-      dateNow: '2020-03-12',
+      firstDate: '2020-01-22',
+      lastDate: '2021-01-02',
+      dateNow: '2021-01-02',
       dateIndex: 1,
       stopRepeatMax: 999999,
       stopRepeatCount: 0,
-      dataOri: null
+      dataOri: null,
+      whatToShow: '总确诊人数',
+      lastWhatToShow: '总确诊人数',
+      optionList: ['总确诊人数', '总治愈人数', '总死亡人数']
     }
   },
 
   mounted () {
-    this.dataOri = this.cabarDataOri
+    this.dataOri = this.cabarDataOri[0]
     this.firstDate = this.dataOri[0][1]
     this.lastDate = this.dataOri[0][this.dataOri[0].length - 1]
     this.dateNow = this.dataOri[0][this.dataOri[0].length - 2]
+    console.log(this.dataOri)
+    console.log(this.dataOri[0].length)
     this.cabarInit()
   },
 
@@ -230,7 +247,11 @@ export default {
       var createTicker = () => {
         // eslint-disable-next-line no-unused-vars
         const ticker = d3.interval(() => {
-          if (this.dateIndex < this.dataOri[0].length - 1) {
+          if (this.svgDelete) {
+            d3.select('#cabar-container').select('svg').remove()
+            this.svgDelete = false
+            ticker.stop()
+          } else if (this.dateIndex < this.dataOri[0].length - 1) {
             this.dateIndex++
             this.dateNow = this.dataOri[0][this.dateIndex]
             date = getDate()
@@ -284,8 +305,24 @@ export default {
       }
       this.dateNow = this.dataOri[0][this.dateIndex]
       this.stopRepeatCount = 0
-    }
+    },
 
+    async switchWhatToShow (opt) {
+      this.lastWhatToShow = this.whatToShow
+      this.whatToShow = opt
+      if (this.whatToShow === '总治愈人数') {
+        this.dataOri = this.cabarDataOri[1]
+      } else if (this.whatToShow === '总死亡人数') {
+        this.dataOri = this.cabarDataOri[2]
+      } else {
+        this.dataOri = this.cabarDataOri[0]
+      }
+      this.svgDelete = true
+      this.firstDate = this.dataOri[0][1]
+      this.lastDate = this.dataOri[0][this.dataOri[0].length - 1]
+      this.dateNow = this.dataOri[0][this.dataOri[0].length - 2]
+      this.cabarInit()
+    }
   }
 }
 </script>
