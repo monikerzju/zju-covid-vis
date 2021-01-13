@@ -265,7 +265,6 @@ export default {
         .attr('font-size', 12)
         .attr('transform', `translate(${15},${25})`)
 
-      // 不知道为啥在这里会把this.chartDate\this.data识别为undefined，所以在外面声明一个全局变量缓存数据
       let dataCache = this.chartData
       let dateCache = this.date
       let typeNowCache = this.typeNow
