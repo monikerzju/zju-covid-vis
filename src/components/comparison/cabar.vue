@@ -201,7 +201,8 @@ export default {
           .style('width', d => scale(d.value))
           .style('height', barHeight + 'px')
           .style('fill', d => d.color)
-
+          .attr('opacity', 0.75)
+          
         barsEnter.append('text')
           .classed('label', true)
           .text(d => d.name)
