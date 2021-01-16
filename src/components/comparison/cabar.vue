@@ -62,14 +62,11 @@ export default {
     this.firstDate = this.dataOri[0][1]
     this.lastDate = this.dataOri[0][this.dataOri[0].length - 1]
     this.dateNow = this.dataOri[0][this.dataOri[0].length - 2]
-    console.log(this.dataOri)
-    console.log(this.dataOri[0].length)
     this.cabarInit()
   },
 
   methods: {
     cabarInit () {
-      // console.log(this.dataOri)
       const width = document.body.clientWidth - 50
       const height = 600
       const margin = {top: 20, bottom: 0, left: 50, right: 200}
@@ -311,9 +308,9 @@ export default {
     async switchWhatToShow (opt) {
       this.lastWhatToShow = this.whatToShow
       this.whatToShow = opt
-      if (this.whatToShow === '总治愈人数') {
+      if (this.whatToShow === '总死亡人数') {
         this.dataOri = this.cabarDataOri[1]
-      } else if (this.whatToShow === '总死亡人数') {
+      } else if (this.whatToShow === '总治愈人数') {
         this.dataOri = this.cabarDataOri[2]
       } else {
         this.dataOri = this.cabarDataOri[0]
